@@ -139,7 +139,12 @@ flask run
 
 -- > pytest tests/integrations/controllers/test_user.py::test_create_user 
 
+
 --------------
+
+-- > poetry add psycopg2-binary="*"
+
+-- > poetry add gunicorn="*"
 
 ===============================================
 
@@ -307,3 +312,21 @@ everywhere
 
 Validate IP address
 0.0.0.0
+
+===============================================
+
+
+echo "# DeployDeUmaAPIFlaskDIOBank" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/ferreirasilvaeduardo/DeployDeUmaAPIFlaskDIOBank.git
+git push -u origin main
+
+…or push an existing repository from the command line
+git remote add origin https://github.com/ferreirasilvaeduardo/DeployDeUmaAPIFlaskDIOBank.git
+git branch -M main
+git push -u origin main
+
+==============================================
