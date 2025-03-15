@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "dio-bank"
+version = "0.1.0"
+description = ""
+authors = ["Eduardo da Silva Ferreira <eduardo.s.fereira@gmail.com>"]
+readme = "README.md"
+packages = [{include = "dio_bank", from = "src"}]
+license = "MIT" # Adicionado licença, caso queira incluir.
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+flask = "^3.1.0"
+sqlalchemy = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
+flask-jwt-extended = { version = "^4.7.1", python = ">=3.9,<4" }
+pytest = "*"
+
+[tool.poetry.group.dev.dependencies]
+pytest-mock = "^3.14.0"
+
+[tool.pytest.ini_options]
+# addopts = "-ra -q"
+addopts = "-ra -vvv"
+testpaths = [
+    "tests"
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
