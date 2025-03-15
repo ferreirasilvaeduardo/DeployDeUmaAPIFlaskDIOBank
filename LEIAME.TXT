@@ -1,0 +1,309 @@
+==============================================================
+
+Para ativar o ambiente virtual gerenciado pelo Poetry, você pode usar o comando poetry shell. Isso ativará o ambiente virtual e permitirá que você execute comandos dentro dele.
+
+Passo a Passo para Ativar o Ambiente Virtual do Poetry
+1) Navegue até o diretório raiz do seu projeto:
+cd /dio/py/ForPytBacDev/04DesenvolvimentoDeAPIsComFlask/dio_bank
+
+2) Ative o ambiente virtual do Poetry:
+poetry shell
+
+Comandos Completos
+Aqui estão os comandos completos que você deve executar no terminal:
+cd /dio/py/ForPytBacDev/04DesenvolvimentoDeAPIsComFlask/dio_bank
+poetry shell
+
+Verificação
+Após executar poetry shell, você deve ver algo como (dio-bank-SAtpFEk3-py3.12) no início da linha de comando, indicando que o ambiente virtual está ativo.
+
+Executando o Flask
+- Depois de ativar o ambiente virtual, você pode executar o Flask usando o comando flask run. 
+  Certifique-se de que a variável de ambiente FLASK_APP está configurada corretamente para apontar para o arquivo app.py dentro da pasta src.
+export FLASK_APP=src/app.py
+flask run --debug
+
+- Comandos Completos para Executar o Flask
+cd /dio/py/ForPytBacDev/04DesenvolvimentoDeAPIsComFlask/dio_bank
+poetry shell
+export FLASK_APP=src/app.py
+flask run --debug
+
+
+Explicação
+cd /dio/py/ForPytBacDev/04DesenvolvimentoDeAPIsComFlask/dio_bank: Navega até o diretório raiz do projeto.
+poetry shell: Ativa o ambiente virtual gerenciado pelo Poetry.
+export FLASK_APP=src/app.py: Define a variável de ambiente FLASK_APP para apontar para o arquivo app.py dentro da pasta src.
+flask run --debug: Executa o servidor Flask em modo de depuração.
+Isso deve ativar o ambiente virtual do Poetry e iniciar o servidor Flask corretamente. Se precisar de mais alguma coisa, estou à disposição!
+
+
+
+===========================================
+APOS a criacao do codigo com o banco de dados
+
+--> flask --app src.app init-db
+
+OBS : 
+ISTO COM AMBIENTE VIRTUAL, SENAO tem que informar poetry run, antes do comando acima
+
+Saida esperada:
+Initialized the database.
+
+===========================================
+
+OUTROS COMANDOS
+
+ativar ambiente virtual
+-- > eval $(poetry env activate)
+
+-- > deactivate : sair do comando virtual do poetry :: https://python-poetry.org/docs/managing-environments/#activating-the-environment
+
+--> poetry run flask --app src.app init-db
+
+## --> poetry run flask --app app run --debug
+--> poetry run flask --app src.app run --debug
+
+-->
+cd /dio/py/ForPytBacDev/04DesenvolvimentoDeAPIsComFlask/dio_bank
+export FLASK_APP=src/app.py
+flask run
+
+
+--> isort . && black . && autopep8 --in-place --recursive .
+--> flake8 .
+--> pylint $(find . -name "*.py")
+
+--> poetry add 'Flask-Migrate=*'
+
+ https://flask-migrate.readthedocs.io/en/latest/
+
+--> flask -app src.app db init 
+
+-- >  poetry run flask --app  src.app db init
+
+-- >  poetry run flask --app src.app db migrate -m "Initial migration."
+
+-- >  poetry run flask --app  src.app db init
+
+-- >  poetry run flask --app src.app db upgrade 
+
+-- >  poetry run flask --app src.app db migrate -m "Add active attr in user."
+
+-- >  poetry run flask --app src.app db upgrade
+
+-- >  poetry run flask --app src.app db downgrade
+
+-- >  poetry run flask --app src.app db current
+
+-- >  poetry run flask --app src.app db check
+
+-- >  poetry run flask --app src.app db migrate -m "Remove active attr in user."
+
+-- >  poetry run flask --app src.app db heads
+
+-- >  poetry run flask --app src.app db migrate -m "Add role table."
+
+-- >  poetry run flask --app src.app db migrate -m "Initial migration."
+
+-- >  poetry run flask --app src.app db upgrade
+
+-- >  poetry run flask --app src.app db migrate -m "Add password field"
+
+-- >  poetry run flask --app src.app db upgrade
+
+--------------------------
+
+-- > poetry self add poetry-plugin-export
+
+-- > poetry export --output requirements.txt --format requirements.txt --without-hashes
+
+--------------
+
+
+-- > poetry add 'pytest=*'
+
+-- > pipx install pytest
+
+-- > poetry add pytest-mock --dev
+
+-- > pytest
+
+-->  poetry run pytest 
+
+-- > poetry add pytest-mock --dev
+
+-- > pytest tests/integrations
+
+-- > pytest tests/integrations/controllers/test_user.py  
+
+-- > pytest tests/integrations/controllers/test_user.py::test_create_user 
+
+--------------
+
+===============================================
+
+dio-bank-py3.12eduardof@kyros5425-NOTE:/dio/py/ForPytBacDev/04DesenvolvimentoDeAPIsComFlask/dio_bank$ poetry add 'Flask-SQLAlchemy=*'
+
+Updating dependencies
+Resolving dependencies... (1.1s)
+
+Package operations: 4 installs, 0 updates, 0 removals
+
+  - Installing greenlet (3.1.1)
+  - Installing typing-extensions (4.12.2)
+  - Installing sqlalchemy (2.0.38)
+  - Installing flask-sqlalchemy (3.1.1)
+
+
+sudo pip install flask-sqlalchemy
+
+https://www.sqlalchemy.org/
+
+
+https://docs.sqlalchemy.org/en/20/core/selectable.html
+
+
+https://flask-sqlalchemy.readthedocs.io/en/stable/
+
+
+https://www.freecodecamp.org/portuguese/news/o-que-e-um-orm-o-significado-das-ferramentas-de-mapeamento-relacional-de-objetos-de-banco-de-dados/
+https://www.freecodecamp.org/portuguese/news/o-que-e-um-orm-o-significado-das-ferramentas-de-mapeamento-relacional-de-objetos-de-banco-de-dados/
+
+ORM significa Object-Relational Mapping (Mapeamento Objeto-Relacional). É uma técnica usada para criar uma "ponte" entre programas orientados a objetos e bancos de dados relacionais1. Em outras palavras, o ORM permite que você interaja com um banco de dados relacional usando a linguagem de programação orientada a objetos, sem precisar escrever comandos SQL diretamente2.
+
+As ferramentas ORM ajudam a simplificar operações como criar, ler, atualizar e excluir dados (CRUD) em um banco de dados1. Exemplos populares de ferramentas ORM incluem Hibernate para Java, Django ORM para Python e Entity Framework para .NET1.
+
+Se precisar de mais detalhes ou tiver outra dúvida, estou aqui para ajudar!
+
+
+https://www.freecodecamp.org/portuguese/news/o-que-e-um-orm-o-significado-das-ferramentas-de-mapeamento-relacional-de-objetos-de-banco-de-dados/
+
+SQLAlchemy é uma biblioteca SQL toolkit e Object-Relational Mapping (ORM) para Python. Ela fornece uma maneira de interagir com bancos de dados relacionais usando uma abordagem orientada a objetos. SQLAlchemy é amplamente utilizada em aplicações web e outras aplicações que requerem acesso a bancos de dados.
+
+Principais Componentes do SQLAlchemy
+Core (SQL Expression Language):
+
+Permite a construção de consultas SQL de forma programática e flexível.
+Fornece uma camada de abstração sobre o SQL, permitindo a construção de consultas complexas de maneira mais intuitiva.
+ORM (Object-Relational Mapping):
+
+Permite mapear classes Python para tabelas de banco de dados.
+Facilita a manipulação de dados do banco de dados como objetos Python.
+Suporta relacionamentos entre tabelas, herança e outras funcionalidades avançadas.
+
+
+https://www.freecodecamp.org/portuguese/news/o-que-e-um-orm-o-significado-das-ferramentas-de-mapeamento-relacional-de-objetos-de-banco-de-dados/
+
+Ferramentas ORM populares para Python
+1. Django
+O Django é uma ótima ferramenta para criar aplicações da web rapidamente.
+
+2. web2py
+O web2py é um framework full-stack de código aberto do Python para criar aplicações da web rápidas, escaláveis, seguras e orientadas a dados.
+
+3. SQLObject
+O SQLObject é um gerenciador relacional de objetos que fornece uma interface de objeto para seu banco de dados.
+
+4. SQLAlchemy
+O SQLAlchemy fornece padrões de persistência projetados para acesso a banco de dados eficiente e de alto desempenho.
+
+
+===============================================
+
+
+stgreSQL
+dio-bank.pg
+Free
+Upgrade your instance
+View docs
+
+Connect
+Info
+Your database will expire on April 14, 2025. The database will be deleted unless you upgrade to a paid instance type.
+General
+Name
+A unique name for your database.
+
+dio-bank.pg
+
+Edit
+Created
+5 minutes ago
+Status
+available
+PostgreSQL Version
+15
+Region
+Oregon (US West)
+Read Replicas
+
+Add Read Replica
+Storage
+4.75% used out of 1 GB
+Database storage
+Datadog API Key
+
+Add Datadog API Key
+PostgreSQL Instance
+Instance Type
+Free
+256 MB
+ RAM
+100m
+ CPU
+1 GB
+ Storage
+Update
+A credit card is required to change instance types.
+Add payment information
+High Availability
+Run a standby instance of your database and automatically fail over to it if the primary encounters an issue.
+
+
+Disabled
+Only available for Pro instances and higher.
+See upgrade options
+Connections
+Hostname
+An internal hostname used by your Render services.
+
+dpg-cvartd5rie7s7398u6vg-a
+
+Port
+5432
+
+Database
+diobank_31pn
+
+Username
+diobank
+
+Password
+zpFyJZNBVwD0WarQG73FI50aFwFYdkzb
+
+
+Internal Database URL
+postgresql://diobank:zpFyJZNBVwD0WarQG73FI50aFwFYdkzb@dpg-cvartd5rie7s7398u6vg-a/diobank_31pn
+
+
+External Database URL
+postgresql://diobank:zpFyJZNBVwD0WarQG73FI50aFwFYdkzb@dpg-cvartd5rie7s7398u6vg-a.oregon-postgres.render.com/diobank_31pn
+
+
+PSQL Command
+PGPASSWORD=zpFyJZNBVwD0WarQG73FI50aFwFYdkzb psql -h dpg-cvartd5rie7s7398u6vg-a.oregon-postgres.render.com -U diobank diobank_31pn
+
+
+Access Control
+1 IP range is allowed from outside of your private network.
+
+Sources are specified CIDR block notation.
+
+Source
+Description
+0.0.0.0/0
+everywhere
+
+Validate IP address
+0.0.0.0
