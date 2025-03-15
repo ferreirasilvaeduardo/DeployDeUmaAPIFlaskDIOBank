@@ -90,8 +90,9 @@ def create_app(test_config=None):
     # Define a configuração padrão
     app.config.from_mapping(
         SECRET_KEY="dev",
-        SQLALCHEMY_DATABASE_URI="sqlite:///blog.sqlite",  # Configura o banco de dados SQLite
-        SQLALCHEMY_TRACK_MODIFICATIONS=False,  # Desativa track modifications para economizar recursos
+        SQLALCHEMY_DATABASE_URI=os.environ["DATABASE_URL"],  # Configura o banco de dados SQLite
+        # SQLALCHEMY_DATABASE_URI="sqlite:///blog.sqlite",  # Configura o banco de dados SQLite
+        # SQLALCHEMY_TRACK_MODIFICATIONS=False,  # Desativa track modifications para economizar recursos
         JWT_SECRET_KEY="super-secret",  # Change this! JWTManager # Setup the Flask-JWT-Extended extension
     )
 
