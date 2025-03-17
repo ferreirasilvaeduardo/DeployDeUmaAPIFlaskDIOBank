@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from src.app import Role, User, db
+from src.models import Role, User, db
 
 
 def test_get_user_true(client):

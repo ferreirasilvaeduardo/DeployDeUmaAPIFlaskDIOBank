@@ -3,16 +3,13 @@ from http import HTTPStatus  # Importa os códigos de status HTTP
 from flask import Blueprint, request  # Importa o Blueprint e request do Flask
 from sqlalchemy import inspect  # Importa inspect do SQLAlchemy
 
-from src.app import Role, db  # Importa o modelo Role e a instância do banco de dados
+from src.models import Role, db
 
 # Cria um Blueprint para o módulo de roles
 app = Blueprint("role", __name__, url_prefix="/roles")
 
 
 def _create_role():
-    """
-    Cria um novo role com os dados fornecidos na requisição.
-    """
     data = request.json  # Obtém os dados da requisição
     role = Role(
         name=data["name"],
@@ -22,12 +19,6 @@ def _create_role():
 
 
 def _list_roles(role_id=None):
-    """
-    Lista todos os roles ou um role específico se o role_id for fornecido.
-
-    :param role_id: ID do role a ser listado (opcional)
-    :return: Lista de roles ou um role específico
-    """
     if role_id is None:
         query = db.select(Role)  # Cria uma consulta para selecionar todos os roles
         results = db.session.execute(
@@ -54,11 +45,6 @@ def _list_roles(role_id=None):
 
 @app.route("/", methods=["GET", "POST"])
 def handle_role():
-    """
-    Manipula requisições GET e POST para criar ou listar roles.
-
-    :return: Mensagem de sucesso ou lista de roles
-    """
     if request.method == "POST":
         _create_role()  # Chama a função para criar um novo role
         return {
@@ -74,23 +60,11 @@ def handle_role():
 
 @app.route("/<int:role_id>")
 def get_role(role_id):
-    """
-    Obtém um role específico pelo ID.
-
-    :param role_id: ID do role a ser obtido
-    :return: Dados do role
-    """
     return {"roles": _list_roles(role_id)}  # Retorna os dados do role específico
 
 
 @app.route("/<int:role_id>", methods=["PATCH", "PUT"])
 def update_role(role_id):
-    """
-    Atualiza um role específico pelo ID usando métodos PATCH ou PUT.
-
-    :param role_id: ID do role a ser atualizado
-    :return: Dados do role atualizado ou status de erro
-    """
     result = db.get_or_404(
         Role, role_id
     )  # Obtém o role pelo ID ou retorna 404 se não encontrado
@@ -136,12 +110,6 @@ def update_role(role_id):
 
 @app.route("/<int:role_id>", methods=["DELETE"])
 def delete_role(role_id):
-    """
-    Deleta um role específico pelo ID.
-
-    :param role_id: ID do role a ser deletado
-    :return: Dados do role deletado ou status de erro
-    """
     result = db.get_or_404(
         Role, role_id
     )  # Obtém o role pelo ID ou retorna 404 se não encontrado

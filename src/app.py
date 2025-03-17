@@ -1,150 +1,102 @@
 import os
-from datetime import datetime
 
-import click
-import sqlalchemy as sa
-from flask import Flask, current_app
-from flask_jwt_extended import JWTManager
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from flask import Flask, json
+from werkzeug.exceptions import HTTPException
+
+from src.config import Config
+from src.models import bcrypt, db, jwt, ma, migrate, spec
 
 
-class Base(DeclarativeBase):
-    """Classe base para modelos SQLAlchemy."""
-
-    pass
-
-
-db = SQLAlchemy(model_class=Base)
-migrate = Migrate()
-jwt = JWTManager()
-
-
-class Role(db.Model):
-    """Modelo representando um Role/Papel ou Grupo de permissão."""
-
-    id: Mapped[int] = mapped_column(sa.Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(sa.String, nullable=False)
-    user: Mapped[list["User"]] = relationship(back_populates="role")
-
-    def __repr__(self) -> str:
-        """Retorna uma representação em string do Role."""
-        return f"Role(id={self.id!r}, name={self.name!r})"
-
-
-class User(db.Model):
-    """Modelo representando um usuário."""
-
-    id: Mapped[int] = mapped_column(sa.Integer, primary_key=True)
-    username: Mapped[str] = mapped_column(sa.String, unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(sa.String, nullable=False)
-    role_id: Mapped[int] = mapped_column(sa.ForeignKey("role.id"))
-    role: Mapped["Role"] = relationship(back_populates="user")
-
-    def __repr__(self) -> str:
-        """Retorna uma representação em string do User."""
-        return f"User(id={self.id!r}, username={self.username!r})"
-
-
-class Post(db.Model):
-    """Modelo representando uma postagem no blog."""
-
-    id: Mapped[int] = mapped_column(sa.Integer, primary_key=True)
-    title: Mapped[str] = mapped_column(sa.String, nullable=False)
-    body: Mapped[str] = mapped_column(sa.String, nullable=False)
-    created: Mapped[datetime] = mapped_column(
-        sa.DateTime, nullable=False, server_default=sa.func.now()
-    )
-    author_id: Mapped[int] = mapped_column(sa.ForeignKey("user.id"))
-
-    def __repr__(self) -> str:
-        """Retorna uma representação em string do Post."""
-        return (
-            f"Post(id={self.id!r}, title={self.title!r}, author_id={self.author_id!r})"
-        )
-
-
-@click.command("init-db")
-def init_db_command():
-    """Limpa os dados existentes e cria novas tabelas."""
-    # Inicializa o banco de dados criando todas as tabelas
-    global db
-    with current_app.app_context():
-        db.create_all()
-    click.echo("Banco de dados inicializado.")
-
-
-def create_app(test_config=None):
+def create_app(
+    environment=os.getenv("ENVIRONMENT"),
+):
     """
     Cria e configura a aplicação Flask.
-
-    Args:
-        test_config (dict, optional): Dicionário de configuração para testes. Padrão é None.
-
-    Returns:
-        Flask: Aplicação Flask configurada.
     """
     app = Flask(__name__, instance_relative_config=True)
 
-    # Define a configuração padrão
-    app.config.from_mapping(
-        SECRET_KEY="dev",
-        SQLALCHEMY_DATABASE_URI=os.environ["DATABASE_URL"],  # Configura o banco de dados SQLite
-        # SQLALCHEMY_DATABASE_URI="sqlite:///blog.sqlite",  # Configura o banco de dados SQLite
-        # SQLALCHEMY_TRACK_MODIFICATIONS=False,  # Desativa track modifications para economizar recursos
-        JWT_SECRET_KEY="super-secret",  # Change this! JWTManager # Setup the Flask-JWT-Extended extension
-    )
-
-    if test_config is None:
-        # Carrega a configuração da instância, se existir, quando não estiver testando
-        app.config.from_pyfile("config.py", silent=True)
+    if not environment:
+        raise ValueError(
+            "A variável de ambiente ENVIRONMENT não foi definida.", str(environment)
+        )
     else:
-        # Carrega a configuração de teste se passada
-        app.config.from_mapping(test_config)
+        environment = str(environment).strip().lower()
 
-    # Garante que a pasta da instância exista
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
+    if environment not in ["development", "testing", "production"]:
+        raise ValueError(
+            "A variável de ambiente ENVIRONMENT deve ser 'development', 'testing' ou 'production'."
+        )
 
-    # Define uma rota simples que retorna uma mensagem de boas-vindas
-    @app.route("/")
-    def home():
-        """Retorna uma mensagem de boas-vindas."""
-        return "Olá, Seja bem vindo!"
+    app.config.from_object(f"src.config.{str(environment).strip().title()}Config")
 
-    # Registra comandos CLI
-    app.cli.add_command(init_db_command)
+    # Verifica se a variável instance_path existe no objeto app
+    if hasattr(app, "instance_path"):
+        os.makedirs(app.instance_path, exist_ok=True)
+    else:
+        raise AttributeError("O objeto app não possui a variável instance_path.")
+
+    # Inicializa a configuração da aplicação
+    Config.init_app(app)
+
     # Inicializa a aplicação com a extensão SQLAlchemy
     db.init_app(app)
     # Inicializa a aplicação com a extensão Flask-Migrate
     migrate.init_app(app, db)
     # Inicializa a aplicação com a extensão Flask-JWT-Extended
     jwt.init_app(app)
+    # Inicializa a aplicação com a extensão Flask-Bcrypt
+    bcrypt.init_app(app)
+    # Inicializa a aplicação com a extensão Flask-Marshmallow
+    ma.init_app(app)
 
     # Importa e registra blueprints para os controladores
-    from src.controllers import user as user_controller
+    from src.controllers import auth as controllers_app_auth
+    from src.controllers import post as controllers_app_post
+    from src.controllers import role as controllers_app_role
+    from src.controllers import user as controllers_app_user
 
-    app.register_blueprint(user_controller.app)
+    app.register_blueprint(controllers_app_user.app)
+    app.register_blueprint(controllers_app_role.app)
+    app.register_blueprint(controllers_app_post.app)
+    app.register_blueprint(controllers_app_auth.app)
 
-    from src.controllers import post as post_controller
+    # Define uma rota simples que retorna uma mensagem de boas-vindas
+    @app.route("/")  # @app.route("/docs/")
+    def home():
+        """Retorna uma mensagem de boas-vindas."""
+        return spec.path(view=controllers_app_user.get_user).to_dict()  # "Olá, Seja bem vindo!"
 
-    app.register_blueprint(post_controller.app)
-
-    from src.controllers import auth as auth_controller
-
-    app.register_blueprint(auth_controller.app)
-
-    from src.controllers import role as role_controller
-
-    app.register_blueprint(role_controller.app)
+    @app.errorhandler(HTTPException)
+    def handle_exception(e):
+        response = e.get_response()
+        response.data = json.dumps(
+            {
+                "code": e.code,
+                "name": e.name,
+                "description": e.description,
+            }
+        )
+        response.content_type = "application/json"
+        return response
 
     return app
 
 
 if __name__ == "__main__":
     # Cria e executa a aplicação Flask
-    app = create_app()
+    app = create_app(environment=os.getenv("ENVIRONMENT"))
     app.run(debug=True)
+
+# export ENVIRONMENT="sqlite:///blog.sqlite"
+##
+# ProductionConfig
+# export ENVIRONMENT="production"
+# --> ENVIRONMENT=production poetry run flask --app src.app run
+##
+# DevelopmentConfig:
+# export ENVIRONMENT="development"
+# --> ENVIRONMENT=development poetry run flask --app src.app run --debug
+##
+# class TestingConfig(Config):
+# export ENVIRONMENT="testing"
+# --> ENVIRONMENT=testing poetry run flask --app src.app run --debug

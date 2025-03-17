@@ -1,19 +1,21 @@
 import pytest
 
-from src.app import Role, User, create_app, db
+from src.models import Role, User, create_app, db
 
 
 @pytest.fixture(
     scope="function"
 )  # scope= default:function, module, class, function, package or session
 def app():
-    app = create_app(
-        {
-            "SECRET_KEY": "test",
-            "SQLALCHEMY_DATABASE_URI": "sqlite://",  # Configura o banco de dados em memória
-            "JWT_SECRET_KEY": "test",
-        }
-    )
+
+    app = create_app(environment="testing")
+    # app = create_app(
+    #     {
+    #         "SECRET_KEY": "test",
+    #         "SQLALCHEMY_DATABASE_URI": "sqlite://",  # Configura o banco de dados em memória
+    #         "JWT_SECRET_KEY": "test",
+    #     }
+    # )
 
     with app.app_context():
         db.create_all()

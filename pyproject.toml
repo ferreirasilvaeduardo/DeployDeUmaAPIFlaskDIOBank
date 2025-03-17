@@ -14,12 +14,17 @@ sqlalchemy = "*"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
 flask-jwt-extended = { version = "^4.7.1", python = ">=3.9,<4" }
-pytest = "*"
 psycopg2-binary = "*"
 gunicorn = "*"
+flask-bcrypt = "*"
+werkzeug = "*"
+flask-marshmallow = "*"
+marshmallow-sqlalchemy = "*"
+apispec-webframeworks = "*"
 
 [tool.poetry.group.dev.dependencies]
-pytest-mock = "^3.14.0"
+pytest = "*"
+pytest-mock = "*"
 
 [tool.pytest.ini_options]
 # addopts = "-ra -q"

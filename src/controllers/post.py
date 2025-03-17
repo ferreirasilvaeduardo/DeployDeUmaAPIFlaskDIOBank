@@ -3,16 +3,13 @@ from http import HTTPStatus  # Importa os códigos de status HTTP
 from flask import Blueprint, request  # Importa o Blueprint e request do Flask
 from sqlalchemy import inspect  # Importa inspect do SQLAlchemy
 
-from src.app import Post, db  # Importa o modelo Post e a instância do banco de dados
+from src.models import Post, db
 
 # Cria um Blueprint para o módulo de posts
 app = Blueprint("post", __name__, url_prefix="/posts")
 
 
 def _create_post():
-    """
-    Cria um novo post com os dados fornecidos na requisição.
-    """
     data = request.json  # Obtém os dados da requisição
     post = Post(
         title=data["title"],
@@ -24,12 +21,6 @@ def _create_post():
 
 
 def _list_posts(post_id=None):
-    """
-    Lista todos os posts ou um post específico se o post_id for fornecido.
-
-    :param post_id: ID do post a ser listado (opcional)
-    :return: Lista de posts ou um post específico
-    """
     if post_id is None:
         query = db.select(Post)  # Cria uma consulta para selecionar todos os posts
         results = db.session.execute(
@@ -60,11 +51,6 @@ def _list_posts(post_id=None):
 
 @app.route("/", methods=["GET", "POST"])
 def handle_post():
-    """
-    Manipula requisições GET e POST para criar ou listar posts.
-
-    :return: Mensagem de sucesso ou lista de posts
-    """
     if request.method == "POST":
         _create_post()  # Chama a função para criar um novo post
         return {
@@ -80,23 +66,11 @@ def handle_post():
 
 @app.route("/<int:post_id>")
 def get_post(post_id):
-    """
-    Obtém um post específico pelo ID.
-
-    :param post_id: ID do post a ser obtido
-    :return: Dados do post
-    """
     return {"posts": _list_posts(post_id)}  # Retorna os dados do post específico
 
 
 @app.route("/<int:post_id>", methods=["PATCH", "PUT"])
 def update_post(post_id):
-    """
-    Atualiza um post específico pelo ID usando métodos PATCH ou PUT.
-
-    :param post_id: ID do post a ser atualizado
-    :return: Dados do post atualizado ou status de erro
-    """
     result = db.get_or_404(
         Post, post_id
     )  # Obtém o post pelo ID ou retorna 404 se não encontrado
@@ -144,12 +118,6 @@ def update_post(post_id):
 
 @app.route("/<int:post_id>", methods=["DELETE"])
 def delete_post(post_id):
-    """
-    Deleta um post específico pelo ID.
-
-    :param post_id: ID do post a ser deletado
-    :return: Dados do post deletado ou status de erro
-    """
     result = db.get_or_404(
         Post, post_id
     )  # Obtém o post pelo ID ou retorna 404 se não encontrado

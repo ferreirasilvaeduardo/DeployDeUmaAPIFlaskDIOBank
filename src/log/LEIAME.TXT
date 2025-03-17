@@ -146,6 +146,35 @@ flask run
 
 -- > poetry add gunicorn="*"
 
+-- > poetry remove pytest pytest-mock 
+
+-- > poetry add pytest pytest-mock 
+
+-- > poetry add 'flask-bcrypt=*'
+
+----------------------------------------------------------
+export ENVIRONMENT="sqlite:///blog.sqlite"
+
+ProductionConfig
+	export ENVIRONMENT="production"
+--> ENVIRONMENT=production poetry run flask --app src.app run
+
+DevelopmentConfig:
+	export ENVIRONMENT="development"
+--> ENVIRONMENT=development poetry run flask --app src.app run --debug
+
+class TestingConfig(Config):
+	export ENVIRONMENT="testing"
+--> ENVIRONMENT=testing poetry run flask --app src.app run --debug
+
+
+ENVIRONMENT=development poetry run flask --app src.app run --debug
+----------------------------------------------------------
+
+-- > poetry add 'flask-marshmallow=*'
+
+-- > poetry add 'marshmallow-sqlalchemy=*'
+
 ===============================================
 
 dio-bank-py3.12eduardof@kyros5425-NOTE:/dio/py/ForPytBacDev/04DesenvolvimentoDeAPIsComFlask/dio_bank$ poetry add 'Flask-SQLAlchemy=*'
@@ -312,6 +341,14 @@ everywhere
 
 Validate IP address
 0.0.0.0
+
+External Database URL
+postgresql:
+//
+user: diobank
+password: zpFyJZNBVwD0WarQG73FI50aFwFYdkzb
+hostname: dpg-cvartd5rie7s7398u6vg-a.oregon-postgres.render.com
+database: diobank_31pn
 
 ===============================================
 
